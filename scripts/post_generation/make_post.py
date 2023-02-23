@@ -1,28 +1,48 @@
 from jinja2 import Template
-from os import walk
 
 
-class BlogPages:
+MAX_HEADER_LENGTH = 5
+
+RETURN = "\n"
+RESERVED_LINES_MAX_INDEX = 1
+
+
+class PostConvertor:
     def __init__(self, input_filename):
         self._input_filename = input_filename
 
-    def generate_pages(self):
+    def make_post_html(self, meta_description, background_image_name, post_date):
 
         # Load post template
         html_template = ""
-        with open("blog_page_template.html", mode='r') as f:
+        with open("post_template.html", mode='r') as f:
             while 1:
                 line = f.readline()
                 if not line:
                     break
                 html_template += line
 
-        # Query for the blogs
-        f = []
-        for (dirpath, dirnames, filenames) in walk(mypath):
-            f.extend(filenames)
+        # Convert article to html
+
+        # Load the article
+        article_lines = list()
+        with open(self._input_filename, mode="r", encoding='utf-8-sig') as f:
+            article_lines = f.readlines()
+        if len(article_lines) == 0:
+            print("Failed to load article!!!")
+            return None
+
+        # Detect the title
+        title = article_lines[0].replace(RETURN, "")
+
+        # Subtitle is always the second line, if its not empty
+        sub_title = ""
+        if article_lines[1] is not None or article_lines[1] is not RETURN:
+            sub_title = article_lines[1].replace(RETURN, "")
 
         # Parse the rest for the article text
+        article_text = ""
+        paragraph = ""
         first_line_index = 0
         first_line_found = False
         recording_paragraph = False
@@ -95,7 +115,7 @@ class BlogPages:
         j2_template = Template(html_template)
         html = j2_template.render(template_parameters)
 
-        return html
+        return html, template_parameters
 
     def is_heading(self, line):
         # assert isinstance(line, str)
@@ -136,6 +156,7 @@ class BlogPages:
 
 if __name__ == '__main__':
     import argparse
+    from json import encoder
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--file-in", default=None)
@@ -146,11 +167,14 @@ if __name__ == '__main__':
 
         if "html" in args.file_out.lower():
             generator = PostConvertor(args.file_in)
-            html_text = generator.make_post_html("meta", "background.jpg", "April 1 2020")
+            html_text, json_data = generator.make_post_html("meta", "background.jpg", "April 1 2020")
 
             # Write the file out
             with open(args.file_out, mode='w') as f:
                 f.write(html_text)
+            # Write the json file out
+            with open(args.file_out + ".json", mode='w') as f:
+                f.write(encoder.JSONEncoder().encode(json_data))
         else:
             print("The output file type is not .html!")
     else:
