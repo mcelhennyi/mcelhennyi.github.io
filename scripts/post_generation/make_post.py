@@ -169,6 +169,9 @@ if __name__ == '__main__':
             generator = PostConvertor(args.file_in)
             html_text, json_data = generator.make_post_html("meta", "background.jpg", "April 1 2020")
 
+            # Add the file name to the json for later usage TODO FIX THIS NAME!!!!!
+            json_data["post_page_href"] = "blogs/" + args.file_out
+
             # Write the file out
             with open(args.file_out, mode='w') as f:
                 f.write(html_text)
