@@ -12,10 +12,10 @@
     <title>{{head_title}}</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{additional_path_back}}../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="../css/clean-blog.min.css" rel="stylesheet">
+    <link href="{{additional_path_back}}../css/clean-blog.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -44,20 +44,20 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html">Home</a>
+                <a class="navbar-brand" href="{{additional_path_back}}../index.html">Home</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="blog.html">Blog</a>
+                        <a href="{{additional_path_back}}../blog_pages/blog_page_0.html">Blog</a>
                     </li>
                     <li>
-                        <a href="about.html">About</a>
+                        <a href="{{additional_path_back}}../about.html">About</a>
                     </li>
                     <li>
-                        <a href="contact.html">Contact</a>
+                        <a href="{{additional_path_back}}../contact.html">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -68,15 +68,14 @@
 
     <!-- Page Header -->
     <!-- Set your background image for this header on the line below. -->
-    <header class="intro-header" style="background-image: url('../img/{{background_image_name}}')">
+    <header class="intro-header" style="background-image: url('{{additional_path_back}}../img/{{background_image_name}}')">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <div class="post-heading">
                         <h1>{{title}}</h1>
                         <h2 class="subheading">{{sub_title}}</h2>
-<!--                        <span class="meta">Posted by <a href="#">Start Bootstrap</a> on August 24, 2014</span>-->
-                        <span class="meta">Posted by <a href="../about.html">Ian McElhenny</a> on {{post_date}}</span>
+                        <span class="meta">Posted by <a href="{{additional_path_back}}../about.html">Ian McElhenny</a> on {{post_date}}</span>
                     </div>
                 </div>
             </div>
@@ -135,13 +134,13 @@
     </footer>
 
     <!-- jQuery -->
-    <script src="../js/jquery.js"></script>
+    <script src="{{additional_path_back}}../js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="../js/bootstrap.min.js"></script>
+    <script src="{{additional_path_back}}../js/bootstrap.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
-    <script src="../js/clean-blog.min.js"></script>
+    <script src="{{additional_path_back}}../js/clean-blog.min.js"></script>
 
 </body>
 

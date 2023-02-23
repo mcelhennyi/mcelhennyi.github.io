@@ -77,7 +77,7 @@ class BlogPostPreview:
 
         # Fill out parameters for jinja
         post_preview_template_parameters = {
-            "post_page_ref": self._post_page_href,
+            "post_page_href": "../" + self._post_page_href,
             "title": self._title,
             "subtitle": self._subtitle,
             "post_date": self._post_date,
@@ -137,7 +137,7 @@ class BlogPagesGenerator:
                     data["title"],
                     data["sub_title"],
                     data["post_date"],
-                    data["background_imag_name"]
+                    data["background_image_name"]
                 )
                 preview_blocks.append(post_preview)
 
@@ -151,8 +151,9 @@ class BlogPagesGenerator:
             preview_block_html = ""
             random_background = ""
             base_post_index = page_index * self._num_previews_per_page
-            random_index = random.randrange(0, len(preview_blocks) - base_post_index - 1)
-            for post_index in range(base_post_index, base_post_index + self._num_previews_per_page):
+            max_index = min(len(preview_blocks) - (base_post_index + 1), self._num_previews_per_page)
+            random_index = random.randrange(0, max_index) + base_post_index
+            for post_index in range(base_post_index, base_post_index + max_index):
                 # Generate this preview to text
                 preview_html = preview_blocks[post_index].generate()
 
@@ -161,7 +162,7 @@ class BlogPagesGenerator:
 
                 # Grab the random index image
                 if random_index == post_index:
-                    random_background = preview_blocks[post_index].get_background()
+                    random_background = preview_blocks[random_index].get_background()
 
             # Now add the correct buttons to the bottom
             if page_index == 0:
@@ -201,7 +202,7 @@ class BlogPagesGenerator:
             html = j2_template.render(template_parameters)
 
             # Write out the page to file
-            with open(self.make_page_name(page_index), mode='w') as f:
+            with open(os.path.join("..", os.path.join("..", os.path.join("blog_pages", self.make_page_name(page_index)))), mode='w') as f:
                 f.write(html)
 
 
@@ -213,4 +214,3 @@ if __name__ == '__main__':
 
     generator = BlogPagesGenerator()
     generator.generate_pages()
-

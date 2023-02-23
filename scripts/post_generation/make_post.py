@@ -8,8 +8,18 @@ RESERVED_LINES_MAX_INDEX = 1
 
 
 class PostConvertor:
-    def __init__(self, input_filename):
+    def __init__(self, input_filename, output_filename):
         self._input_filename = input_filename
+        self._output_filename = output_filename
+
+        # check if we need to add ../ for paths
+        self._back_dir_count = 0
+        path_items = self._output_filename.split("/")
+        for i, path_item in enumerate(path_items):
+            if path_item == "blogs":
+                if i < len(path_items) - 2:
+                    self._back_dir_count = len(path_items) - 2 - i
+                    break
 
     def make_post_html(self, meta_description, background_image_name, post_date):
 
@@ -109,13 +119,22 @@ class PostConvertor:
             "sub_title": sub_title,
             "post_date": post_date,
             "article_text": article_text,
+            "additional_path_back": "../" * self._back_dir_count
         }
 
         # Run jinja
         j2_template = Template(html_template)
         html = j2_template.render(template_parameters)
 
-        return html, template_parameters
+        # Add the file name to the json for later usage
+        template_parameters["post_page_href"] = "/".join(args.file_out.split("/")[2:])
+
+        # Write the file out
+        with open(self._output_filename, mode='w') as f:
+            f.write(html)
+        # Write the json file out
+        with open(self._output_filename + ".json", mode='w') as f:
+            f.write(encoder.JSONEncoder().encode(template_parameters))
 
     def is_heading(self, line):
         # assert isinstance(line, str)
@@ -166,18 +185,9 @@ if __name__ == '__main__':
     if args.file_in:
 
         if "html" in args.file_out.lower():
-            generator = PostConvertor(args.file_in)
-            html_text, json_data = generator.make_post_html("meta", "background.jpg", "April 1 2020")
+            generator = PostConvertor(args.file_in, args.file_out)
+            generator.make_post_html("meta", "background.jpg", "April 1 2020")
 
-            # Add the file name to the json for later usage TODO FIX THIS NAME!!!!!
-            json_data["post_page_href"] = "blogs/" + args.file_out
-
-            # Write the file out
-            with open(args.file_out, mode='w') as f:
-                f.write(html_text)
-            # Write the json file out
-            with open(args.file_out + ".json", mode='w') as f:
-                f.write(encoder.JSONEncoder().encode(json_data))
         else:
             print("The output file type is not .html!")
     else:
