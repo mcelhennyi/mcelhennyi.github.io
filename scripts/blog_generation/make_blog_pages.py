@@ -152,8 +152,10 @@ class BlogPagesGenerator:
             random_background = ""
             base_post_index = page_index * self._num_previews_per_page
             max_index = min(len(preview_blocks) - (base_post_index + 1), self._num_previews_per_page)
-            random_index = random.randrange(0, max_index) + base_post_index
-            for post_index in range(base_post_index, base_post_index + max_index):
+            random_index = 0
+            if max_index > 0:
+                random_index = random.randrange(0, max_index) + base_post_index
+            for post_index in range(base_post_index, base_post_index + max_index + 1):
                 # Generate this preview to text
                 preview_html = preview_blocks[post_index].generate()
 
@@ -186,8 +188,8 @@ class BlogPagesGenerator:
                     preview_block_html += pager.generate_forward()
 
             # Fill out template parameters using jinja
-            title = "Blog Page " + str(page_index)
-            sub_title = ""  # TODO
+            title = "Blogs"
+            sub_title = "Page " + str(page_index)
             template_parameters = {
                 "meta_description": "A blog page",
                 "head_title": title,

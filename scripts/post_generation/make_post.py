@@ -1,3 +1,5 @@
+import datetime
+
 from jinja2 import Template
 
 
@@ -177,16 +179,21 @@ if __name__ == '__main__':
     import argparse
     from json import encoder
 
+    time_now = datetime.datetime.now()
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--file-in", default=None)
     parser.add_argument("--file-out", default="post.html")
+    parser.add_argument("--post-date", default=time_now.strftime("%B %d, %Y"))
+    parser.add_argument("--background-image", default="background.jpg")
+    parser.add_argument("--meta-description", default="")
     args = parser.parse_args()
 
     if args.file_in:
 
         if "html" in args.file_out.lower():
             generator = PostConvertor(args.file_in, args.file_out)
-            generator.make_post_html("meta", "background.jpg", "April 1 2020")
+            generator.make_post_html(args.meta_description, args.background_image, args.post_date)
 
         else:
             print("The output file type is not .html!")

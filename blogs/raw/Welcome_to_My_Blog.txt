@@ -1,0 +1,5 @@
+﻿Welcome To My Blog
+A little about my future plans
+
+
+Hello everyone, I am planning to start blogging here on my site. My goal is to outline some of my thoughts on various topics in a way that allows you, the reader, to understand how and what I think about things. I will cover anything from high-level planning in software/hardware projects, low level algorithms/design-choices, and lessons learned along the way throughout my career and daily life. My interests include software, hardware, woodworking, metal working, drones, cars, tinkering, diy projects, BJJ, and much more. So I plan to post blogs about ALL sorts of topics, because that's how I run my daily life. I love trying out new things and seeing how can I apply myself in those new areas. Thanks for taking a read, and check back for more updates in the future!
