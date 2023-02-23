@@ -100,6 +100,9 @@ class PostConvertor:
                     # start recording
                     recording_paragraph = True
 
+                    # Check if the line includes a link
+                    line = self.check_and_inject_link(line)
+
                     # Save off the body
                     paragraph += line
 
@@ -167,6 +170,56 @@ class PostConvertor:
             paragraph = "\t" * 5
 
         return paragraph + "<p>{}</p>".format(text.replace(RETURN, ""))
+
+    def check_and_inject_link(self, line):
+        link_text_start = -1
+        recording_link_text = False
+        link_text = ""
+        recording_link_url = False
+        link_url = ""
+        to_replace = ""
+        for i, char in enumerate(line):
+            if char == "[":
+                recording_link_text = True
+                link_text_start = i
+                to_replace += char
+                continue
+            if char == "]":
+                recording_link_text = False
+                to_replace += char
+                continue
+            if char == "(" and link_text != "":
+                recording_link_url = True
+                to_replace += char
+                continue
+            if char == ")" and recording_link_url:
+                # Stop recording and inject new text
+                recording_link_url = False
+                to_replace += char
+
+                # make link to inject
+                link_html = self.make_link(link_text, link_url)
+
+                # inject it (remove template code)
+                line = line.replace(to_replace, link_html)
+
+                # Recurse this call to recheck a line after amendment
+                line = self.check_and_inject_link(line)
+
+                # We are done, break out
+                to_replace = ""
+                break
+
+            if recording_link_text:
+                link_text += char
+
+            if recording_link_url:
+                link_url += char
+
+            if recording_link_url or recording_link_text:
+                to_replace += char
+
+        return line
 
     def make_link(self, link_text, link_url):
         return "<a href=\"{}\">{}</a>".format(link_url, link_text)

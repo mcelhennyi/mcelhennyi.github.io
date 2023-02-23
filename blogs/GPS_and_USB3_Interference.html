@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A blog post about GPS and USB3.0 issues">
+    <meta name="author" content="Ian McElhenny">
+
+    <title>GPS and USB3.0 Interference post</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../css/clean-blog.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../index.html">Home</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="../blog_pages/blog_page_0.html">Blog</a>
+                    </li>
+                    <li>
+                        <a href="../about.html">About</a>
+                    </li>
+                    <li>
+                        <a href="../contact.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header class="intro-header" style="background-image: url('../img/emi.jpeg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <div class="post-heading">
+                        <h1>Gps and usb3.0 interference</h1>
+                        <h2 class="subheading">How USB3.0 Spec can negatively interact with GPS receivers</h2>
+                        <span class="meta">Posted by <a href="../about.html">Ian McElhenny</a> on February 23, 2023</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Post Content -->
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    					<p>During my time at Third Insight (current) we were tasked with creating a drone that could both fly indoors and outdoors. We made several design decisions early on to be able to prioritize our time into the future for other tasks. One of those decisions was to not focus on an in house SLAM solution initially, but instead use a commercial off the shelf (COTS) solution. We went with both the D435 for point clouds and the T265 with a GPS receiver for positioning. This decision had a LOT of downstream effects, one being USB3.0 interference. </p>
+					<h2 class="section-heading">The Issue</h2>
+					<p>It’s a <a href="https://www.google.com/search?q=gps+usb3.0+interference">well known problem</a> (to some) that the USB3.0 spec is very noisy. This is due to the high speed communication over the USB3.0 wires and connectors without the existence of twisted pairs (such as what is found in an ethernet cable) or sufficient shielding. Twisted pairs are beneficial because they allow for a positive and a negative signal to be sent along two wires that are twisted together. However, it is not just any positive and negative signal, specifically they are differential signals. This means that the negative signal is the exact inverse of the positive signal. This allows for a few benefits. One benefit of a twisted pair is they reduce the electromagnetic radiation/interference (EMI) from the signals over the wires. When current is moving along a wire it creates a magnetic field around that wire in a rotational fashion (<a href="https://web.ua.es/docivis/magnet/righthand_rule.html#:~:text=An%20electric%20current%20passes%20through,of%20the%20magnetic%20north%20pole.">right hand rule for current and magnetism</a>). We also know that the frequency of the signal has a direct relationship to the frequency of noise generated by the signal. If you twist the wires and send the same signal shape with inverted magnitudes that causes an inversion of the magnetic field from each wire relative to each other. This allows the fields to effectively cancel each other out, theoretically making the magnetic field 0 in each direction. </p>
+					<p>USB3.0 is not a differential type of protocol. Meaning the wires internal to the cable of a USB3.0 cable are not twisted pairs with reduced (or no) EMI. The best a USB3.0 cable can do is shield its internal noise from one end to another. This is done by wrapping the bundle of wires in a conductive sleeve that is grounded on ONE end. If the shield is grounded on both ends it either acts as the ground itself OR as a ground loop if there is also a ground wire in the bundle. A ground loop can greatly reduce the effectiveness of a ground shield. USB3.0 is also a high speed protocol, meaning that the noise generated is high frequency. However, USB 2.0 does not suffer from this issue because its speeds do not approach the frequency of a GPS receiver. </p>
+					<h2 class="section-heading">The Solution</h2>
+					<p>The solution we came up with for our drone was to wrap all USB3.0 components, cables, and connectors in a one-side-grounded shield. This ensured that the ground plane that we wrapped around every cable and component would NOT induce a ground loop. It was specifically important to extend the shielding over the connector as well, since the connector itself was a large source of noise. This solution took an unusable GPS antenna and made it work almost as well as it did without any USB3.0 devices. In our test case our GPS receiver was a few inches above any USB3.0 devices. This made use of the built in ground plane on the bottom of the GPS unit. We also placed it several inches behind any of the USB3.0 devices/cables to increase the distance between the GPS and EMI. As we know EMI intensity follows the <a href="https://en.wikipedia.org/wiki/Inverse-square_law">inverse square law</a>. This means that any distance, D, you move away from the signal, intensity reduces by a factor of D^2.</p>
+
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <ul class="list-inline text-center">
+                        <li>
+                            <a href="https://www.linkedin.com/in/ian-mcelhenny/">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/mcelhennyi">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.youtube.com/channel/UCOd3F3PCg3re78-pYsdSYXA">
+                                <span class="fa-stack fa-lg">
+                                    <i class="fa fa-circle fa-stack-2x"></i>
+                                    <i class="fa fa-youtube fa-stack-1x fa-inverse"></i>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <p class="copyright text-muted">Not a web frontend specialist :\</p>
+                    <p class="copyright text-muted">Copyright &copy; Ian McElhenny 2023</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="../js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="../js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
